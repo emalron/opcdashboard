@@ -86,7 +86,10 @@ const OpcUaDataViewer = ({ serverId, namespace, nodeId }) => {
         {connected ? <span className="text-base font-rg text-sky-500">Connected</span> : <span className="text-base font-rg text-red-400">Disconnected</span>}
       </div>
       <div></div>
-      {connected && opcConnected ? <OpcUaBrowser serverUrl={serverUrl} /> : <OpcConnector serverUrl={serverUrl} setServerUrl={setServerUrl} setOpcConnected={setOpcConnected} />}
+      {connected && opcConnected ? 
+        <OpcUaBrowser serverUrl={serverUrl} namespace={namespace} nodeId={nodeId} /> 
+        : 
+        <OpcConnector serverUrl={serverUrl} setServerUrl={setServerUrl} setOpcConnected={setOpcConnected} />}
 
       {connected && opcConnected ? (
         <div>
@@ -108,9 +111,9 @@ const OpcUaDataViewer = ({ serverId, namespace, nodeId }) => {
             <tbody>
               {Object.entries(nodeValues).map(([nodeId, value]) => (
                 <tr key={nodeId}>
-                  <td className="border border-gray-300 p-2 text-center border-l-0">name</td>
+                  <td className="border border-gray-300 p-2 text-center border-l-0">{value.name}</td>
                   <td className="border border-gray-300 p-2 text-center">{nodeId}</td>
-                  <td className="border border-gray-300 p-2 border-r-0">{value}</td>
+                  <td className="border border-gray-300 p-2 border-r-0">{value.value}</td>
                 </tr>
               ))}
             </tbody>
