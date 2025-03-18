@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 
 const OpcConnector = ({serverUrl, setServerUrl, setOpcConnected}) => {
-    const [serverUrl, setServerUrl] = useState('http://localhost:8080');
     const [opcUrl, setOpcUrl] = useState('opc.tcp://192.168.0.114:4841/freeopcua/server');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
