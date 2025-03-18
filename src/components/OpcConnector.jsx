@@ -8,6 +8,8 @@ const OpcConnector = ({serverUrl, setServerUrl, setOpcConnected}) => {
 
     // 보이시나요?
 
+    // 예 보입니다 ㅅㄱㅇ
+
     const sendMessage = async (e) => {
         e.preventDefault();
         setLoading(true);
