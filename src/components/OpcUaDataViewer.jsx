@@ -90,7 +90,7 @@ const OpcUaDataViewer = ({ serverId }) => {
             </div>
                 {
                     connected && opcConnected ?
-                    (<OpcUaBrowser />)
+                    (<OpcUaBrowser serverUrl={serverUrl} />)
                     :
                     (<OpcConnector serverUrl={serverUrl} setServerUrl={setServerUrl} setOpcConnected={setOpcConnected}/>)
                 }
