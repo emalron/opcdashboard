@@ -3,14 +3,15 @@ import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import OpcUaBrowser from "./OpcUaBrowser";
 import OpcConnector from "./OpcConnector";
+import OpcNodeValue from "./OpcNodeValue";
 
 const OpcUaDataViewer = ({ serverId, namespace, nodeId }) => {
-    const [serverUrl, setServerUrl] = useState('http://localhost:8080');
-    const [connected, setConnected] = useState(false);
-    const [opcConnected, setOpcConnected] = useState(false);
-    const [nodeValues, setNodeValues] = useState({});
-    const clientRef = useRef(null);
-    const subscriptionRef = useRef(null);
+  const [serverUrl, setServerUrl] = useState("http://localhost:8080");
+  const [connected, setConnected] = useState(false);
+  const [opcConnected, setOpcConnected] = useState(false);
+  const [nodeValues, setNodeValues] = useState({});
+  const clientRef = useRef(null);
+  const subscriptionRef = useRef(null);
 
   const cleanup = () => {
     if (clientRef.current && clientRef.current.connected) {
@@ -86,41 +87,13 @@ const OpcUaDataViewer = ({ serverId, namespace, nodeId }) => {
         {connected ? <span className="text-base font-rg text-sky-500">Connected</span> : <span className="text-base font-rg text-red-400">Disconnected</span>}
       </div>
       <div></div>
-      {connected && opcConnected ? 
-        <OpcUaBrowser serverUrl={serverUrl} namespace={namespace} nodeId={nodeId} /> 
-        : 
-        <OpcConnector serverUrl={serverUrl} setServerUrl={setServerUrl} setOpcConnected={setOpcConnected} />}
-
       {connected && opcConnected ? (
-        <div>
-          {" "}
-          <h3 className="mt-8 font-bold text-lg">Node Values</h3>
-          <table className="data-table table-auto border-collapse w-full mt-2">
-            <colgroup>
-              <col width="30%" />
-              <col width="30%" />
-              <col width="40%" />
-            </colgroup>
-            <thead>
-              <tr>
-                <th className="border border-gray-300 p-2 bg-gray-100 font-medium text-title border-l-0">Name</th>
-                <th className="border border-gray-300 p-2 bg-gray-100 font-medium text-title">Node Id</th>
-                <th className="border border-gray-300 p-2 bg-gray-100 font-medium text-title border-r-0">Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.entries(nodeValues).map(([nodeId, value]) => (
-                <tr key={nodeId}>
-                  <td className="border border-gray-300 p-2 text-center border-l-0">{value.name}</td>
-                  <td className="border border-gray-300 p-2 text-center">{nodeId}</td>
-                  <td className="border border-gray-300 p-2 border-r-0">{value.value}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <>
+          <OpcUaBrowser serverUrl={serverUrl} namespace={namespace} nodeId={nodeId} />
+          <OpcNodeValue nodeValues={nodeValues} />
+        </>
       ) : (
-        ""
+        <OpcConnector serverUrl={serverUrl} setServerUrl={setServerUrl} setOpcConnected={setOpcConnected} />
       )}
     </div>
   );
