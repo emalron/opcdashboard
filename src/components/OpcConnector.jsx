@@ -6,15 +6,11 @@ const OpcConnector = ({ serverUrl, setServerUrl, setOpcConnected }) => {
   const [error, setError] = useState(false);
   const [response, setResponse] = useState("");
 
-  // 보이시나요?
-
-  // 예 보입니다 ㅅㄱㅇ
-
-  const sendMessage = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    setResponse("");
+    const sendMessage = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+        setResponse('');
 
     try {
       const opcHost = { url: opcUrl };

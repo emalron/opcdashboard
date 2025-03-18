@@ -4,13 +4,13 @@ import { Client } from "@stomp/stompjs";
 import OpcUaBrowser from "./OpcUaBrowser";
 import OpcConnector from "./OpcConnector";
 
-const OpcUaDataViewer = ({ serverId }) => {
-  const [serverUrl, setServerUrl] = useState("http://localhost:8080");
-  const [connected, setConnected] = useState(false);
-  const [opcConnected, setOpcConnected] = useState(false);
-  const [nodeValues, setNodeValues] = useState({});
-  const clientRef = useRef(null);
-  const subscriptionRef = useRef(null);
+const OpcUaDataViewer = ({ serverId, namespace, nodeId }) => {
+    const [serverUrl, setServerUrl] = useState('http://localhost:8080');
+    const [connected, setConnected] = useState(false);
+    const [opcConnected, setOpcConnected] = useState(false);
+    const [nodeValues, setNodeValues] = useState({});
+    const clientRef = useRef(null);
+    const subscriptionRef = useRef(null);
 
   const cleanup = () => {
     if (clientRef.current && clientRef.current.connected) {
