@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { ChevronRight, ChevronDown, Box, Tag, Database, Grid, Layers, Server } from 'lucide-react';
+import { ChevronRight, ChevronDown, Box, Tag, Database, Grid, Layers, Server, RotateCw, Cable } from 'lucide-react';
 
 const nodeIcons = {
     Object: <Box className="text-blue-600" size={18} />,
@@ -18,9 +18,6 @@ const TreeNode = ({node, fetchChildren, serverUrl}) => {
     const [loading, setLoading] = useState(false);
 
     const toggleExpand = async () => {
-        console.log('toggleExpand')
-        console.log(node)
-        console.log(isExpanded, node.children > 0, children.length)
         if(!isExpanded && children.length == 0) {
             setLoading(true);
             try {
@@ -40,6 +37,7 @@ const TreeNode = ({node, fetchChildren, serverUrl}) => {
     };
 
     const sendNodeToApi = (namespace, identifier) => {
+        console.log(serverUrl)
         fetch(`${serverUrl}/traverse/${namespace}/${identifier}`)
     }
 
@@ -63,6 +61,12 @@ const TreeNode = ({node, fetchChildren, serverUrl}) => {
                     ({node.nodeClass}, NS: {node.namespaceIndex}, identifier: {node.identifier})
                 </span>
 
+                <Cable className="ml-2 hover:text-red-700" size={16} 
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        sendNodeToApi(node.namespaceIndex, node.identifier);
+                    }}
+                />
                 {loading && <span className="ml-2 text-xs text-blue-500">Loading...</span>}
             </div>
             {isExpanded && children.length > 0 && (
@@ -72,6 +76,7 @@ const TreeNode = ({node, fetchChildren, serverUrl}) => {
                             key={e.identifier}
                             node={e}
                             fetchChildren={fetchChildren}
+                            serverUrl={serverUrl}
                         />
                     ))}
                 </div>
@@ -80,31 +85,40 @@ const TreeNode = ({node, fetchChildren, serverUrl}) => {
     )
 }
 
-const OpcUaBrowser = ({serverUrl}) => {
+const OpcUaBrowser = ({serverUrl, namespace, nodeId}) => {
     const [rootNode, setRootNode] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const fetchRootNode = async () => {
+        try {
+            const response = await fetch(`${serverUrl}/browse/${namespace}/${nodeId}`);
+            if (!response.ok) throw new Error('Failed to load root');
 
-    useEffect(() => {
-        const fetchRootNode = async () => {
+            let data;
             try {
-                const response = await fetch(`${serverUrl}/browse`);
-                if (!response.ok) throw new Error('Failed to load root');
-                const data = await response.json();
-                setRootNode(data);
-            } catch (error) {
-                console.error("Error fetching root node:", error);
-                setError(error.message);
-            } finally {
-                setLoading(false);
+                const text = await response.text();
+                data = text ? JSON.parse(text) : null;
+            } catch(err) {
+                console.error(`JSON parsing error: ${err}`)
+                data = null;
             }
-        };
+            setRootNode(data);
+        } catch (error) {
+            console.error("Error fetching root node:", error);
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {  
         fetchRootNode();
     }, []);
 
     const fetchChildren = async (nodeId) => {
         console.log(`fetchChildren: ${nodeId}`)
-        return await fetch(`http://localhost:8080/browse/${nodeId}`)
+        console.log(`serverUrl: ${serverUrl}`)
+        return await fetch(`${serverUrl}/browse/${namespace}/${nodeId}`)
                         .then(response => {
                             if(!response.ok) throw new Error('Failed to load children')
                             return response.json();
@@ -121,7 +135,14 @@ const OpcUaBrowser = ({serverUrl}) => {
 
     return (
         <div className="p-4 border rounded-lg bg-white shadow-sm">
-            <h2 className="text-lg font-bold mb-4">OPC UA Node Browser</h2>
+            <h2 className="text-lg font-bold mb-4 flex items-center">
+                OPC UA Node Browser 
+                <RotateCw 
+                    className="text-green-600 ml-2 cursor-pointer" 
+                    size={18} 
+                    onClick={fetchRootNode}
+                />
+            </h2>
             <div className="border roudned p-2 bg-gray-50 overflow-auto max-h-96">
                 {rootNode && <TreeNode node={rootNode} fetchChildren={fetchChildren} serverUrl={serverUrl} />}
             </div>

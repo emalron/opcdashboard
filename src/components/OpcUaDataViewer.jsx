@@ -4,7 +4,7 @@ import { Client } from '@stomp/stompjs';
 import OpcUaBrowser from "./OpcUaBrowser";
 import OpcConnector from "./OpcConnector";
 
-const OpcUaDataViewer = ({ serverId }) => {
+const OpcUaDataViewer = ({ serverId, namespace, nodeId }) => {
     const [serverUrl, setServerUrl] = useState('http://localhost:8080');
     const [connected, setConnected] = useState(false);
     const [opcConnected, setOpcConnected] = useState(false);
@@ -50,6 +50,8 @@ const OpcUaDataViewer = ({ serverId }) => {
                 const subscription = stompClient.subscribe(`/topic/opcua/${serverId}`, (message) => {
                     try {
                         const data = JSON.parse(message.body);
+                        console.log(message.body);
+                        console.log(data);
                         setNodeValues(data);
                     } catch(error) {
                         console.error(`Error parsing message: ${error}`);
@@ -90,7 +92,7 @@ const OpcUaDataViewer = ({ serverId }) => {
             </div>
                 {
                     connected && opcConnected ?
-                    (<OpcUaBrowser serverUrl={serverUrl} />)
+                    (<OpcUaBrowser namespace={namespace} nodeId={nodeId} serverUrl={serverUrl} />)
                     :
                     (<OpcConnector serverUrl={serverUrl} setServerUrl={setServerUrl} setOpcConnected={setOpcConnected}/>)
                 }
@@ -111,9 +113,9 @@ const OpcUaDataViewer = ({ serverId }) => {
                 <tbody>
                     {Object.entries(nodeValues).map(([nodeId, value]) => (
                         <tr key={nodeId}>
-                            <td className="border border-gray-300 p-2 text-center border-l-0">name</td>
+                            <td className="border border-gray-300 p-2 text-center border-l-0">{value.name}</td>
                             <td className="border border-gray-300 p-2 text-center">{nodeId}</td>
-                            <td className="border border-gray-300 p-2 border-r-0">{value}</td>
+                            <td className="border border-gray-300 p-2 border-r-0">{value.value}</td>
                         </tr>
                     ))}
                 </tbody>
