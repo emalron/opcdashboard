@@ -120,9 +120,9 @@ const OpcUaBrowser = ({serverUrl}) => {
     }
 
     return (
-        <div className="p-4 border rounded-lg bg-white shadow-sm">
-            <h2 className="text-lg font-bold mb-4">OPC UA Node Browser</h2>
-            <div className="border roudned p-2 bg-gray-50 overflow-auto max-h-96">
+        <div className="mt-8">
+            <h2 className="text-lg font-bold mb-2">OPC UA Node Browser</h2>
+            <div className="border border-gray-300 roudned p-2 bg-gray-50 overflow-auto max-h-96">
                 {rootNode && <TreeNode node={rootNode} fetchChildren={fetchChildren} serverUrl={serverUrl} />}
             </div>
         </div>
