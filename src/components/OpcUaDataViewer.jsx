@@ -81,34 +81,39 @@ const OpcUaDataViewer = ({ serverId }) => {
 
     return (
         <div className="opcua-data-viewer">
-            <h2>OPCUA Data Viewer</h2>
-            <div className="connection-status">
-                Status: { connected ? 'Connected' : 'Disconnected'}
+            <h3 className="mt-8 font-medium text-xl">OPCUA Data Viewer</h3>
+            <div className="connection-status flex ">
+                <span className="text-xl">Status</span><span className="text-xl">{ connected ? 'Connected' : 'Disconnected'}</span>
             </div>
             <div>
 
             </div>
                 {
                     connected && opcConnected ?
-                    (<OpcUaBrowser serverUrl={serverUrl} />)
+                    (<OpcUaBrowser />)
                     :
                     (<OpcConnector serverUrl={serverUrl} setServerUrl={setServerUrl} setOpcConnected={setOpcConnected}/>)
                 }
-            <h3>Node Values:</h3>
-            <table className="data-table">
+            <h3 className="mt-8 font-medium text-2xl">Node Values</h3>
+            <table className="data-table table-auto border-collapse w-full mt-2">
+                <colgroup>
+                    <col width="30%"/>
+                    <col width="30%" />
+                    <col width="40%" />
+                </colgroup>
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Node Id</th>
-                        <th>Value</th>
+                        <th className="border border-gray-300 p-2 bg-gray-100 font-medium text-title border-l-0">Name</th>
+                        <th className="border border-gray-300 p-2 bg-gray-100 font-medium text-title">Node Id</th>
+                        <th className="border border-gray-300 p-2 bg-gray-100 font-medium text-title border-r-0">Value</th>
                     </tr>
                 </thead>
                 <tbody>
                     {Object.entries(nodeValues).map(([nodeId, value]) => (
                         <tr key={nodeId}>
-                            <td>name</td>
-                            <td>{nodeId}</td>
-                            <td>{value}</td>
+                            <td className="border border-gray-300 p-2 text-center border-l-0">name</td>
+                            <td className="border border-gray-300 p-2 text-center">{nodeId}</td>
+                            <td className="border border-gray-300 p-2 border-r-0">{value}</td>
                         </tr>
                     ))}
                 </tbody>
