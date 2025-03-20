@@ -4,8 +4,8 @@ import OpcUaDataViewer from "./components/OpcUaDataViewer";
 
 function App() {
   const [serverId, setServerId] = useState(1);
-  const [namespace, setNamespace] = useState(0);
-  const [nodeId, setNodeId] = useState(85);
+  const [namespace, setNamespace] = useState(3);
+  const [nodeId, setNodeId] = useState('d2507506-a200-4fd7-89a9-94a156ba1584');
 
   return (
     <div className="App">
@@ -37,11 +37,10 @@ function App() {
           <label className="flex gap-2 items-center">
             <span className="text-neutral-500 font-light">NodeId</span>
             <input
-              type="number"
+              type="text"
               className="bg-white text-neutral-950 font-semibold border border-gray-300 p-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-sm"
               value={nodeId}
-              onChange={(e) => setNodeId(Number(e.target.value))}
-              min="1"
+              onChange={(e) => setNodeId(e.target.value)}
             />
           </label>
         </div>

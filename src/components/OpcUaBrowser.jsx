@@ -12,7 +12,7 @@ const nodeIcons = {
     View: <Box className="text-gray-500" size={18} />,
 };
 
-const TreeNode = ({node, fetchChildren, serverUrl}) => {
+const TreeNode = ({namespace, node, fetchChildren, serverUrl}) => {
     const [isExpanded, setIsExpanded] =  useState(false);
     const [children, setChildren] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -21,8 +21,9 @@ const TreeNode = ({node, fetchChildren, serverUrl}) => {
         if(!isExpanded && children.length == 0) {
             setLoading(true);
             try {
-                const childrenNodes = await fetchChildren(node.identifier);
+                const childrenNodes = await fetchChildren(namespace, node.identifier);
                 setChildren(childrenNodes.children);
+                console.log(childrenNodes)
             } catch(error) {
                 console.error(`toggleExpand: ${error}`)
             } finally {
@@ -60,13 +61,16 @@ const TreeNode = ({node, fetchChildren, serverUrl}) => {
                 <span className="ml-2 text-xs text-gray-500">
                     ({node.nodeClass}, NS: {node.namespaceIndex}, identifier: {node.identifier})
                 </span>
-
-                <Cable className="ml-2 hover:text-red-700" size={16} 
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        sendNodeToApi(node.namespaceIndex, node.identifier);
-                    }}
-                />
+                {
+                    node.hasChildren && (
+                        <Cable className="ml-2 hover:text-red-700" size={16} 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                sendNodeToApi(node.namespaceIndex, node.identifier);
+                            }}
+                        />
+                )}
+                
                 {loading && <span className="ml-2 text-xs text-blue-500">Loading...</span>}
             </div>
             {isExpanded && children.length > 0 && (
@@ -74,6 +78,7 @@ const TreeNode = ({node, fetchChildren, serverUrl}) => {
                     {children.map(e => (
                         <TreeNode
                             key={e.identifier}
+                            namespace={namespace}
                             node={e}
                             fetchChildren={fetchChildren}
                             serverUrl={serverUrl}
@@ -115,10 +120,10 @@ const OpcUaBrowser = ({serverUrl, namespace, nodeId}) => {
         fetchRootNode();
     }, []);
 
-    const fetchChildren = async (nodeId) => {
+    const fetchChildren = async (ns, nodeId) => {
         console.log(`fetchChildren: ${nodeId}`)
         console.log(`serverUrl: ${serverUrl}`)
-        return await fetch(`${serverUrl}/browse/${namespace}/${nodeId}`)
+        return await fetch(`${serverUrl}/browse/${ns}/${nodeId}`)
                         .then(response => {
                             if(!response.ok) throw new Error('Failed to load children')
                             return response.json();
@@ -144,7 +149,7 @@ const OpcUaBrowser = ({serverUrl, namespace, nodeId}) => {
                 />
             </h2>
             <div className="border roudned p-2 bg-gray-50 overflow-auto max-h-96">
-                {rootNode && <TreeNode node={rootNode} fetchChildren={fetchChildren} serverUrl={serverUrl} />}
+                {rootNode && <TreeNode namespace={namespace} node={rootNode} fetchChildren={fetchChildren} serverUrl={serverUrl} />}
             </div>
         </div>
     )
