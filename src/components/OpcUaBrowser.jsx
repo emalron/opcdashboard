@@ -23,6 +23,7 @@ const TreeNode = ({namespace, node, fetchChildren, serverUrl}) => {
             try {
                 const childrenNodes = await fetchChildren(namespace, node.identifier);
                 setChildren(childrenNodes.children);
+                console.log(childrenNodes)
             } catch(error) {
                 console.error(`toggleExpand: ${error}`)
             } finally {

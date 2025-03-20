@@ -22,7 +22,7 @@ export default function OpcNodeValue({nodeValues}) {
             <tr key={nodeId}>
               <td className="border border-gray-300 p-2 text-center border-l-0">{value.name}</td>
               <td className="border border-gray-300 p-2 text-center">{nodeId}</td>
-              <td className="border border-gray-300 p-2 border-r-0">{value.value}</td>
+              <td className="border border-gray-300 p-2 border-r-0">{value.value ? value.value : 'false'}</td>
             </tr>
           ))}
         </tbody>

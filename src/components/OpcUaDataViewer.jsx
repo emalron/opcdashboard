@@ -34,7 +34,7 @@ const OpcUaDataViewer = ({ serverId, namespace, nodeId }) => {
 
       // STOMP 클라이언트 생성
       const stompClient = new Client({
-        webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
+        webSocketFactory: () => new SockJS(`${serverUrl}/ws`),
         debug: (str) => {
           // console.log(str);
         },
