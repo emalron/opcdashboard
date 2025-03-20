@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { ChevronRight, ChevronDown, Box, Tag, Database, Grid, Layers, Server, RotateCw, Cable } from 'lucide-react';
+import { useOpc } from './OpcContext';
 
 const nodeIcons = {
     Object: <Box className="text-blue-600" size={18} />,
@@ -21,7 +22,7 @@ const TreeNode = ({namespace, node, fetchChildren, serverUrl}) => {
         if(!isExpanded && children.length == 0) {
             setLoading(true);
             try {
-                const childrenNodes = await fetchChildren(namespace, node.identifier);
+                const childrenNodes = await fetchChildren(namespace, node.identifier, node.idType);
                 setChildren(childrenNodes.children);
                 console.log(childrenNodes)
             } catch(error) {
@@ -37,9 +38,9 @@ const TreeNode = ({namespace, node, fetchChildren, serverUrl}) => {
         return nodeIcons[node.nodeClass] || <Box size={18} />;
     };
 
-    const sendNodeToApi = (namespace, identifier) => {
+    const sendNodeToApi = (namespace, identifier, type) => {
         console.log(serverUrl)
-        fetch(`${serverUrl}/traverse/${namespace}/${identifier}`)
+        fetch(`${serverUrl}/traverse/${namespace}/${type}/${identifier}`)
     }
 
     return (
@@ -59,14 +60,14 @@ const TreeNode = ({namespace, node, fetchChildren, serverUrl}) => {
                 <span className="mr-2">{getNodeIcon()}</span>
                 <span className="font-medium">{node.name}</span>
                 <span className="ml-2 text-xs text-gray-500">
-                    ({node.nodeClass}, NS: {node.namespaceIndex}, identifier: {node.identifier})
+                    ({node.nodeClass}, NS: {node.namespaceIndex}, identifier: {node.idType}={node.identifier})
                 </span>
                 {
                     node.hasChildren && (
                         <Cable className="ml-2 hover:text-red-700" size={16} 
                             onClick={(e) => {
                                 e.stopPropagation();
-                                sendNodeToApi(node.namespaceIndex, node.identifier);
+                                sendNodeToApi(node.namespaceIndex, node.identifier, node.idType);
                             }}
                         />
                 )}
@@ -90,13 +91,15 @@ const TreeNode = ({namespace, node, fetchChildren, serverUrl}) => {
     )
 }
 
-const OpcUaBrowser = ({serverUrl, namespace, nodeId}) => {
+const OpcUaBrowser = ({serverUrl}) => {
     const [rootNode, setRootNode] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const {namespace, nodeId, typeValue} = useOpc();
+
     const fetchRootNode = async () => {
         try {
-            const response = await fetch(`${serverUrl}/browse/${namespace}/${nodeId}`);
+            const response = await fetch(`${serverUrl}/browse/${namespace}/${typeValue}/${nodeId}`);
             if (!response.ok) throw new Error('Failed to load root');
 
             let data;
@@ -120,10 +123,10 @@ const OpcUaBrowser = ({serverUrl, namespace, nodeId}) => {
         fetchRootNode();
     }, []);
 
-    const fetchChildren = async (ns, nodeId) => {
+    const fetchChildren = async (ns, nodeId, idType) => {
         console.log(`fetchChildren: ${nodeId}`)
         console.log(`serverUrl: ${serverUrl}`)
-        return await fetch(`${serverUrl}/browse/${ns}/${nodeId}`)
+        return await fetch(`${serverUrl}/browse/${ns}/${idType}/${nodeId}`)
                         .then(response => {
                             if(!response.ok) throw new Error('Failed to load children')
                             return response.json();

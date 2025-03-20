@@ -4,8 +4,10 @@ import { Client } from "@stomp/stompjs";
 import OpcUaBrowser from "./OpcUaBrowser";
 import OpcConnector from "./OpcConnector";
 import OpcNodeValue from "./OpcNodeValue";
+import { useOpc } from "./OpcContext";
 
-const OpcUaDataViewer = ({ serverId, namespace, nodeId }) => {
+const OpcUaDataViewer = () => {
+  const { serverId, namespace, nodeId, typeValue } = useOpc();
   const [serverUrl, setServerUrl] = useState("http://localhost:8080");
   const [connected, setConnected] = useState(false);
   const [opcConnected, setOpcConnected] = useState(false);
@@ -89,7 +91,7 @@ const OpcUaDataViewer = ({ serverId, namespace, nodeId }) => {
       <div></div>
       {connected && opcConnected ? (
         <>
-          <OpcUaBrowser serverUrl={serverUrl} namespace={namespace} nodeId={nodeId} />
+          <OpcUaBrowser serverUrl={serverUrl} />
           <OpcNodeValue nodeValues={nodeValues} />
         </>
       ) : (

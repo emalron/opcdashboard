@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 
 const OpcConnector = ({ serverUrl, setServerUrl, setOpcConnected }) => {
-  const [opcUrl, setOpcUrl] = useState("opc.tcp://192.168.0.3:19800/ISP/JISP-Server");
+  // 예방진단 opc endpoint: opc.tcp://192.168.0.3:19800/ISP/JISP-Server
+  const [opcUrl, setOpcUrl] = useState("opc.tcp://192.168.0.114:4841/freeopcua/server");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [response, setResponse] = useState("");
@@ -50,7 +51,7 @@ const OpcConnector = ({ serverUrl, setServerUrl, setOpcConnected }) => {
         </div>
         <div className="mb-4">
           <label className="block text-base text-gray-500 font-light mb-1">OPC-UA</label>
-          <input type="text" value="opc.tcp://192.168.0.3:19800/ISP/JISP-Server" onChange={(e) => setOpcUrl(e.target.value)} className="w-full p-2 border rounded-sm border-gray-300" required />
+          <input type="text" value={opcUrl} onChange={(e) => setOpcUrl(e.target.value)} className="w-full p-2 border rounded-sm border-gray-300" required />
         </div>
         <button type="submit" disabled={loading} className="w-full bg-gray-800! text-white p-2 rounded-sm! hover:bg-blue-600! disabled:bg-gray-400!">
           {loading ? "전송 중..." : "전송"}
